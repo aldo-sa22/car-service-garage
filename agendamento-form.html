@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Agendar Serviço - CAR SERVICE GARAGE</title>
+<link rel="stylesheet" href="cliente-style.css">
+<style>
+form {
+    max-width: 500px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+input, select, button {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background-color: #2c2c2c;
+    color: #fff;
+    font-size: 16px;
+}
+button {
+    background-color: #FFD700;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+button:hover {
+    background-color: #e6c200;
+}
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center; color:#FFD700;">Agendar Serviço</h2>
+
+<form id="formAgendamento">
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="email" id="email" placeholder="E-mail" required readonly>
+    <input type="tel" id="telefone" placeholder="Telefone" required>
+    <select id="servico" required>
+        <option value="">Selecione o serviço</option>
+        <option>Manutenção preventiva</option>
+        <option>Troca de óleo e filtros</option>
+        <option>Alinhamento e balanceamento</option>
+        <option>Revisão completa</option>
+    </select>
+    <input type="datetime-local" id="dataHora" required>
+    <button type="submit">Agendar</button>
+    <button type="button" onclick="voltar()">← Voltar</button>
+</form>
+
+<script>
+// Pegar dados do usuário logado
+const emailLogado = localStorage.getItem("username");  // mesmo do login ADM/comum
+const roleLogado = localStorage.getItem("userRole");
+
+if(!emailLogado || !roleLogado) {
+    window.location.href = "login.html";
+}
+
+// Preencher e-mail automaticamente
+document.getElementById('email').value = emailLogado;
+
+// Botão Voltar
+function voltar() {
+    if(roleLogado === "adm"){
+        window.location.href = "agendamentos.html";  // tela ADM
+    } else {
+        window.location.href = "dashboard.html";    // tela comum
+    }
+}
+
+// Salvar agendamento
+document.getElementById("formAgendamento").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+
+    const novo = {
+        usuario: emailLogado,
+        role: roleLogado,
+        nome: document.getElementById("nome").value,
+        email: emailLogado,
+        telefone: document.getElementById("telefone").value,
+        servico: document.getElementById("servico").value,
+        dataHora: document.getElementById("dataHora").value
+    };
+
+    agendamentos.push(novo);
+    localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+    alert("Agendamento realizado!");
+    this.reset();
+});
+</script>
+
+</body>
+</html>

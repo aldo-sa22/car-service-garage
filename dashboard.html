@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Área do Cliente - CAR SERVICE GARAGE</title>
+<link rel="stylesheet" href="cliente-style.css">
+<style>
+.dashboard-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    background-color: #1c1c1c;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    color: #fff;
+}
+.dashboard-container h1 {
+    text-align: center;
+    color: #FFD700;
+}
+.dashboard-container a {
+    display: inline-block;
+    margin: 15px 10px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    background: #FFD700;
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+}
+.dashboard-container a:hover {
+    background: #e6c200;
+}
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #FFD700;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #e6c200;
+}
+</style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <h1>Bem-vindo, <span id="usuarioLogado"></span></h1>
+    <a href="agendamento-form.html">Agendar Serviço</a>
+    <a href="agendamentos.html">Meus Agendamentos</a>
+    <button onclick="logout()">Sair</button>
+</div>
+
+<script>
+const emailLogado = localStorage.getItem("usuarioLogado");
+if (!emailLogado) window.location.href = "login.html";
+document.getElementById("usuarioLogado").textContent = emailLogado;
+
+function logout() {
+    localStorage.removeItem("usuarioLogado");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>

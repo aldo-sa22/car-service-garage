@@ -1,0 +1,108 @@
+/* ===== Geral ===== */
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    color: #222;
+}
+
+header {
+    background: #222;
+    color: #fff;
+    padding: 15px;
+}
+
+nav a {
+    color: #fff;
+    margin-right: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+section {
+    padding: 20px;
+}
+
+h1, h2 {
+    color: #FFD700;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    background: #222;
+    color: #fff;
+    margin-top: 20px;
+}
+
+/* ===== Botões ===== */
+button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    background: #FFD700;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #e6c200;
+}
+
+button.secondary {
+    background: #2c2c2c;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+/* ===== Formulários ===== */
+form {
+    max-width: 500px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input, select, textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #2c2c2c;
+    color: #fff;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* ===== Lista de agendamentos ===== */
+.lista-agendamentos {
+    max-width: 500px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ag-card {
+    background: #1c1c1c;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.ag-card strong {
+    color: #FFD700;
+}
+
+.ag-card button {
+    margin-top: 6px;
+    margin-right: 5px;
+    padding: 6px 10px;
+    font-size: 14px;
+}

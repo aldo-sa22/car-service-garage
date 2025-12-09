@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Agendamentos - CAR SERVICE GARAGE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#121212;
+    color:#fff;
+}
+header {
+    background:#222;
+    padding:15px;
+}
+nav a {
+    color:#fff;
+    margin-right:15px;
+    text-decoration:none;
+}
+section {
+    padding:20px;
+}
+
+/* FORMULÁRIO */
+.form-box {
+    margin-top:20px;
+    padding:15px;
+    background:#1c1c1c;
+    border-radius:10px;
+    max-width:450px;
+}
+.form-box input, .form-box select, .form-box textarea {
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:6px;
+    border:none;
+    background:#2c2c2c;
+    color:#fff;
+    box-sizing:border-box;
+}
+.form-box button {
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+    border:none;
+    transition: background 0.3s;
+}
+button.salvar { background:#28a745; color:#fff; }
+button.salvar:hover { background:#218838; }
+button.cancelar { background:#6c757d; color:#fff; }
+button.cancelar:hover { background:#5a6268; }
+button.sair { background:#d9534f; color:#fff; }
+button.sair:hover { background:#c82333; }
+
+/* AGENDAMENTOS */
+.lista { margin-top:25px; }
+.item {
+    padding:15px;
+    margin-bottom:15px;
+    background:#1c1c1c;
+    border:1px solid #444;
+    border-radius:10px;
+}
+.item div { margin-bottom:5px; }
+.item button {
+    margin-right:5px;
+    padding:5px 10px;
+    border-radius:5px;
+    border:none;
+    font-size:13px;
+    cursor:pointer;
+}
+button.editar { background:#ffc107; color:#000; }
+button.editar:hover { background:#e0a800; }
+button.excluir { background:#dc3545; color:#fff; }
+button.excluir:hover { background:#c82333; }
+</style>
+</head>
+<body>
+
+<script>
+// BLOQUEAR ACESSO SE NÃO ESTIVER LOGADO
+if (localStorage.getItem("clienteLogado") !== "true") {
+    window.location.href = "login.html";
+}
+</script>
+
+<header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="login.html">Área do Cliente</a>
+  </nav>
+</header>
+
+<section>
+  <h1>Meus Agendamentos</h1>
+
+  <div class="form-box">
+    <h3 id="formTitle">Novo Agendamento</h3>
+
+    <input id="nome" placeholder="Nome">
+    <input id="telefone" placeholder="Telefone">
+    <select id="servico">
+      <option value="">Selecione o serviço</option>
+      <option>Manutenção preventiva</option>
+      <option>Troca de óleo e filtros</option>
+      <option>Alinhamento e balanceamento</option>
+      <option>Revisão completa</option>
+    </select>
+    <div style="display:flex; gap:10px;">
+      <input type="date" id="data" style="flex:1;">
+      <input type="time" id="hora" style="flex:1;">
+    </div>
+    <textarea id="obs" placeholder="Observações"></textarea>
+
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button class="cancelar" id="btnCancelar" onclick="limparFormulario()">Cancelar</button>
+      <button class="salvar" id="btnSalvar" onclick="salvarAgendamento()">Salvar</button>
+      <button class="sair" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <div id="listaAgend" class="lista"></div>
+</section>
+
+<script>
+const STORAGE_KEY = 'agendamentos_v1';
+const emailRaw = localStorage.getItem("username");
+if (!emailRaw) {
+    alert("Erro: usuário não identificado!");
+    localStorage.removeItem("clienteLogado");
+    window.location.href = "login.html";
+}
+const emailLogado = String(emailRaw).trim().toLowerCase();
+
+// Inicializa storage
+if (!localStorage.getItem(STORAGE_KEY)) localStorage.setItem(STORAGE_KEY, JSON.stringify({}));
+
+let editIndex = null;
+
+// Função para formatar telefone
+function formatarTelefone(tel){
+    tel = tel.replace(/\D/g,'');
+    return tel.replace(/^(\d{2})(\d{4,5})(\d{4})$/,'($1) $2-$3');
+}
+
+// Formatar data DD/MM/AAAA
+function formatarData(dateStr){
+    const d = new Date(dateStr);
+    if(isNaN(d)) return dateStr;
+    const day = String(d.getDate()).padStart(2,'0');
+    const month = String(d.getMonth()+1).padStart(2,'0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
+// Ler storage
+function readAll(){ return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}; }
+function writeAll(obj){ localStorage.setItem(STORAGE_KEY,JSON.stringify(obj)); }
+
+// Carregar agendamentos
+function carregarAgendamentos(){
+    const all = readAll();
+    const lista = all[emailLogado] || [];
+    const container = document.getElementById("listaAgend");
+    if(lista.length===0){
+        container.innerHTML="<p>Nenhum agendamento cadastrado.</p>";
+        return;
+    }
+    container.innerHTML = lista.map((a,i)=>`
+        <div class="item">
+            <div><strong>Serviço:</strong> ${a.servico}</div>
+            <div><strong>Data/Hora:</strong> ${formatarData(a.data)} ${a.hora}</div>
+            <div><strong>Cliente:</strong> ${a.nome}</div>
+            <div><strong>Telefone:</strong> ${formatarTelefone(a.telefone)}</div>
+            <div><strong>Obs:</strong> ${a.obs||"(sem observações)"}</div>
+            <div>
+                <button class="editar" onclick="editarAgendamento(${i})">Editar</button>
+                <button class="excluir" onclick="excluirAgendamento(${i})">Excluir</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Salvar ou editar agendamento
+function salvarAgendamento(){
+    const nome = document.getElementById("nome").value.trim();
+    const telefone = document.getElementById("telefone").value.trim();
+    const servico = document.getElementById("servico").value;
+    const data = document.getElementById("data").value;
+    const hora = document.getElementById("hora").value;
+    const obs = document.getElementById("obs").value.trim();
+    if(!nome||!telefone||!servico||!data||!hora){
+        alert("Preencha todos os campos obrigatórios!");
+        return;
+    }
+
+    const all = readAll();
+    if(!all[emailLogado]) all[emailLogado]=[];
+
+    if(editIndex !== null){
+        all[emailLogado][editIndex] = { nome, telefone, servico, data, hora, obs };
+        editIndex = null;
+    }else{
+        all[emailLogado].push({ nome, telefone, servico, data, hora, obs });
+    }
+
+    writeAll(all);
+    limparFormulario();
+    carregarAgendamentos();
+}
+
+// Limpar formulário
+function limparFormulario(){
+    editIndex=null;
+    document.getElementById("formTitle").innerText="Novo Agendamento";
+    document.getElementById("btnSalvar").innerText="Salvar";
+    document.getElementById("nome").value="";
+    document.getElementById("telefone").value="";
+    document.getElementById("servico").value="";
+    document.getElementById("data").value="";
+    document.getElementById("hora").value="";
+    document.getElementById("obs").value="";
+}
+
+// Editar
+function editarAgendamento(i){
+    const all = readAll();
+    const item = all[emailLogado][i];
+    document.getElementById("nome").value=item.nome;
+    document.getElementById("telefone").value=item.telefone;
+    document.getElementById("servico").value=item.servico;
+    document.getElementById("data").value=item.data;
+    document.getElementById("hora").value=item.hora;
+    document.getElementById("obs").value=item.obs;
+    editIndex = i;
+    document.getElementById("formTitle").innerText="Editar Agendamento";
+    document.getElementById("btnSalvar").innerText="Atualizar";
+}
+
+// Excluir
+function excluirAgendamento(i){
+    if(!confirm("Deseja realmente excluir este agendamento?")) return;
+    const all = readAll();
+    all[emailLogado].splice(i,1);
+    writeAll(all);
+    carregarAgendamentos();
+}
+
+// Logout
+function logout(){
+    localStorage.removeItem("clienteLogado");
+    window.location.href="login.html";
+}
+
+// Inicializa
+carregarAgendamentos();
+</script>
+
+</body>
+</html>

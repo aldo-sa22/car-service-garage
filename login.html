@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Área do Cliente - CAR SERVICE GARAGE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#121212;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.login-container {
+    background:#1c1c1c;
+    padding:30px 25px;
+    border-radius:10px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.6);
+    width:300px;
+    text-align:center;
+    gap:10px;
+    display:flex;
+    flex-direction:column;
+}
+
+.login-container h1 {
+    font-size:20px;
+    color:#FFD700;
+    margin-bottom:15px;
+}
+
+.login-container input {
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #333;
+    background:#2c2c2c;
+    color:#fff;
+    font-size:14px;
+}
+
+.login-container button {
+    padding:10px;
+    border-radius:6px;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+.btn {
+    background:#FFD700;
+    color:#000;
+}
+
+.btn.secondary {
+    background:#2c2c2c;
+    color:#fff;
+    border:1px solid #333;
+}
+
+.message {
+    color:#ff4d4d;
+    font-size:13px;
+    margin-top:5px;
+    height:18px;
+}
+</style>
+</head>
+<body>
+
+<div class="login-container">
+    <h1>Área do Cliente</h1>
+
+    <!-- LOGIN -->
+    <input type="text" id="username" placeholder="Seu e-mail">
+    <input type="password" id="password" placeholder="Senha">
+    <button id="btnLogin" class="btn">Entrar</button>
+    <div class="message" id="loginMessage"></div>
+
+    <button id="btnCriarConta" class="btn secondary">Criar Conta</button>
+    <div class="message" id="cadastroMessage"></div>
+
+    <button id="btnEsqueci" class="btn secondary">Esqueci Senha</button>
+    <div class="message" id="esqueciMessage"></div>
+</div>
+
+<script>
+// Inicializa contas se não existir
+if (!localStorage.getItem("contas")) localStorage.setItem("contas", JSON.stringify([]));
+
+const loginMessage = document.getElementById("loginMessage");
+const cadastroMessage = document.getElementById("cadastroMessage");
+const esqueciMessage = document.getElementById("esqueciMessage");
+
+// LOGIN
+document.getElementById('btnLogin').addEventListener('click', () => {
+    loginMessage.innerText = "";
+    let email = document.getElementById('username').value.trim().toLowerCase();
+    let senha = document.getElementById('password').value.trim();
+
+    if(!email || !senha){ loginMessage.innerText = 'Preencha todos os campos!'; return; }
+
+    const contas = JSON.parse(localStorage.getItem("contas"));
+    const conta = contas.find(c=>c.email===email && c.senha===senha);
+    if(!conta){ loginMessage.innerText = "E-mail ou senha inválidos!"; return; }
+
+    localStorage.setItem("clienteLogado","true");
+    localStorage.setItem("username",email);
+    localStorage.setItem("displayName",conta.nome||"");
+    localStorage.setItem("userRole","comum");
+
+    window.location.href="agendamentos.html";
+});
+
+// CRIAR CONTA
+document.getElementById('btnCriarConta').addEventListener('click', ()=>{
+    cadastroMessage.innerText = "";
+    const nome = prompt("Digite seu nome:");
+    let email = prompt("Digite seu e-mail:"); if(!nome || !email) return;
+    const senha = prompt("Digite uma senha:"); if(!senha) return;
+
+    let contas = JSON.parse(localStorage.getItem("contas"));
+    if(contas.find(c=>c.email===email)){ cadastroMessage.innerText = "E-mail já cadastrado!"; return; }
+
+    contas.push({email,senha,nome});
+    localStorage.setItem("contas", JSON.stringify(contas));
+
+    localStorage.setItem("clienteLogado","true");
+    localStorage.setItem("username",email);
+    localStorage.setItem("displayName",nome);
+    localStorage.setItem("userRole","comum");
+
+    window.location.href="agendamentos.html";
+});
+
+// ESQUECI SENHA INLINE
+document.getElementById('btnEsqueci').addEventListener('click', ()=>{
+    esqueciMessage.innerText = "";
+    let email = prompt("Digite seu e-mail cadastrado:"); if(!email) return;
+    email = email.trim().toLowerCase();
+
+    const contas = JSON.parse(localStorage.getItem("contas"));
+    const conta = contas.find(c=>c.email===email);
+    if(!conta){ esqueciMessage.innerText = "E-mail não encontrado!"; return; }
+
+    esqueciMessage.innerText = `Senha: ${conta.senha}`;
+});
+</script>
+
+</body>
+</html>

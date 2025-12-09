@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Agendamento - CAR SERVICE GARAGE</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #1c1c1c;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    width: 90%;
+    max-width: 450px;
+}
+
+h1 {
+    text-align: center;
+    color: #FFD700;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+input,
+select,
+textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background-color: #2c2c2c;
+    color: #fff;
+    font-size: 15px;
+}
+
+button {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #FFD700;
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #e6c200;
+}
+
+.success-message {
+    display: none;
+    text-align: center;
+    color: #00ff88;
+    margin-top: 15px;
+    font-weight: bold;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <h1>Agendar Serviço</h1>
+
+```
+<form id="formAgendamento">
+    <input type="text" id="nome" placeholder="Nome completo" required readonly>
+    <input type="text" id="telefone" placeholder="Telefone" required>
+    <input type="text" id="placa" placeholder="Placa do veículo" required>
+    <input type="text" id="modelo" placeholder="Modelo do veículo" required>
+
+    <select id="servico" required>
+        <option value="">Selecione o serviço</option>
+        <option>Troca de Óleo</option>
+        <option>Revisão Completa</option>
+        <option>Alinhamento e Balanceamento</option>
+        <option>Diagnóstico</option>
+        <option>Outro</option>
+    </select>
+
+    <input type="date" id="data" required>
+    <input type="time" id="hora" required>
+
+    <textarea id="obs" rows="3" placeholder="Observações (opcional)"></textarea>
+
+    <button type="submit">Enviar Agendamento</button>
+</form>
+
+<p class="success-message" id="msgSucesso">Agendamento enviado com sucesso!</p>
+```
+
+</div>
+
+<script>
+// ================= VERIFICAR LOGIN =================
+const emailLogado = localStorage.getItem("username");
+const roleLogado = localStorage.getItem("userRole");
+
+if (!emailLogado || !roleLogado) {
+    alert("Você precisa estar logado para agendar.");
+    window.location.href = "login.html"; // redireciona para login
+}
+
+// Preencher nome automaticamente
+document.getElementById("nome").value = emailLogado;
+
+// ================= SALVAR NO LOCALSTORAGE =================
+document.getElementById("formAgendamento").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const dados = {
+        usuario: emailLogado,
+        role: roleLogado,
+        nome: document.getElementById("nome").value,
+        telefone: document.getElementById("telefone").value,
+        placa: document.getElementById("placa").value,
+        modelo: document.getElementById("modelo").value,
+        servico: document.getElementById("servico").value,
+        data: document.getElementById("data").value,
+        hora: document.getElementById("hora").value,
+        obs: document.getElementById("obs").value,
+        dataEnvio: new Date().toLocaleString()
+    };
+
+    let lista = JSON.parse(localStorage.getItem("agendamentos")) || [];
+    lista.push(dados);
+    localStorage.setItem("agendamentos", JSON.stringify(lista));
+
+    // Mensagem na tela
+    document.getElementById("msgSucesso").style.display = "block";
+
+    // GERAR TEXTO DO WHATSAPP
+    const numeroOficina = "5511995287024"; // <-- seu número
+    const mensagem = encodeURIComponent(
+        `📅 *Novo Agendamento*\n\n` +
+        `👤 Nome: ${dados.nome}\n` +
+        `📞 Telefone: ${dados.telefone}\n` +
+        `🚗 Veículo: ${dados.modelo} - ${dados.placa}\n` +
+        `🔧 Serviço: ${dados.servico}\n` +
+        `📆 Data: ${dados.data} às ${dados.hora}\n\n` +
+        `📝 Obs: ${dados.obs || "Nenhuma"}`
+    );
+
+    // Abre automaticamente o WhatsApp da oficina
+    window.open(`https://wa.me/${numeroOficina}?text=${mensagem}`, "_blank");
+
+    // Limpa o formulário
+    this.reset();
+});
+</script>
+
+</body>
+</html>

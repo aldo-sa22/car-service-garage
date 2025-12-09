@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>CAR SERVICE GARAGE - Serviços</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Header e menu */
+header {
+width: 100%;
+padding: 10px 20px;
+background-color: #1c1c1c;
+display: flex;
+justify-content: center;
+box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+position: fixed;
+top: 0;
+left: 0;
+z-index: 10;
+}
+
+header nav a {
+color: #FFD700; /* amarelo */
+text-decoration: none;
+margin: 0 20px;
+font-weight: bold;
+text-shadow: 1px 1px 2px #000; /* sombra preta */
+transition: color 0.3s;
+}
+
+header nav a:hover {
+color: #fff; /* branco ao passar o mouse */
+}
+
+/* Main */
+main {
+margin-top: 120px; /* espaço para o header fixo */
+display: flex;
+flex-direction: column;
+align-items: center;
+width: 100%;
+padding: 20px;
+}
+
+h1 {
+margin-bottom: 30px;
+text-align: center;
+color: #FFD700;
+text-shadow: 2px 2px 4px #000;
+}
+
+.cards-container {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 20px;
+max-width: 1000px;
+}
+
+.card {
+background-color: #1c1c1c;
+border-radius: 10px;
+padding: 25px 20px;
+width: 220px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+transition: transform 0.2s, box-shadow 0.2s;
+text-align: center;
+}
+
+.card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 16px rgba(0,0,0,0.7);
+}
+
+.card i {
+font-size: 40px;
+margin-bottom: 15px;
+color: #ffcc00;
+}
+
+.card p {
+margin: 0;
+font-size: 16px;
+font-weight: bold;
+}
+
+/* Footer */
+footer {
+margin-top: auto;
+width: 100%;
+text-align: center;
+padding: 15px 0;
+background-color: #1c1c1c;
+box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
+} </style>
+
+</head>
+<body>
+
+<header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="servicos.html">Serviços</a>
+        <a href="contato-fixo.html">Contato</a>
+        <a href="area-cliente.html">Área do Cliente</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Serviços</h1>
+    <div class="cards-container">
+        <div class="card">
+            <i class="fas fa-tools"></i>
+            <p>Manutenção Preventiva</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-oil-can"></i>
+            <p>Troca de Óleo</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-car-side"></i>
+            <p>Alinhamento e Balanceamento</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-wrench"></i>
+            <p>Revisões Completas</p>
+        </div>
+    </div>
+</main>
+
+<footer>
+    © 2025 CAR SERVICE GARAGE - Todos os direitos reservados
+</footer>
+
+</body>
+</html>
